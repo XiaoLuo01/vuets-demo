@@ -1,17 +1,17 @@
 <template>
- <div class="password">
-     password
+ <div class="login-page">
+     login
  </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
     components: {}
 })
 
-export default class Password extends Vue {}
+export default class LoginHeader extends Vue {}
 </script>
 
 <style>
