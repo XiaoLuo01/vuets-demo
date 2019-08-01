@@ -6,6 +6,9 @@
           <img src="@/assets/logo.png" alt="">
           <span>紫 罗 兰</span>
         </div>
+        <div class="detail">
+          <span>紫罗兰在线, 让每个人都有机会学习编程, 更有能力选择学习想要学习的课程!</span>
+        </div>
       </div>
 
       <!-- 插槽 -->
@@ -20,7 +23,7 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-    components: {}
+  components: {}
 })
 
 export default class LayoutHeader extends Vue {}
