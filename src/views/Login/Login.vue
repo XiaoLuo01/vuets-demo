@@ -20,10 +20,10 @@
         </el-form-item>
 
         <!-- password -->
-        <el-form-item prop="password">
+        <el-form-item prop="pwd">
           <el-input
             type="password"
-            v-model="ruleForm.password"
+            v-model="ruleForm.pwd"
             auto-complete="off"
             placeholder="密码"
           >
@@ -33,7 +33,7 @@
 
         <!-- 登录 button -->
         <el-form-item>
-          <el-button @click.native.prevent="handleSubmit" type="primary" style="width:100%">登录</el-button>
+          <el-button :loading="isLogin" @click.native.prevent="handleSubmit" type="primary" style="width:100%">登录</el-button>
         </el-form-item>
 
         <!-- 7天登录和忘记密码 -->
@@ -55,25 +55,33 @@ import LoginHeader from "./LoginHeader.vue";
 })
 export default class Login extends Vue {
   // 装饰器, 相当于 data return 里面绑定的数据
+  @Provide() isLogin: boolean = false;
   @Provide() ruleForm: {
     username: String;
-    password: String;
+    pwd: String;
     autoLogin: Boolean;
   } = {
     username: "",
-    password: "",
+    pwd: "",
     autoLogin: true
   };
 
   @Provide() rules = {
     username: [{ required: true, message: "请输入账号", trigger: "blur" }],
-    password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+    pwd: [{ required: true, message: "请输入密码", trigger: "blur" }]
   };
 
   handleSubmit(): void {
     (this.$refs["ruleForm"] as any).validate((valid: boolean) => {
       if (valid) {
-        console.log("校验通过");
+        this.isLogin = true;
+        (this as any).$axios.post("/api/users/login", this.ruleForm).then((res: any) => {
+          this.isLogin = false;
+          // 存储 token
+          localStorage.setItem("tsToken", res.data.token);
+        }).catch(() => {
+          this.isLogin = false;
+        })
       }
     });
   }
