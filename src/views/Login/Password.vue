@@ -30,6 +30,7 @@
         <!-- 确定 -->
         <el-form-item>
           <el-button
+            :loading="loading"
             @click.native.prevent="handleSubmit"
             type="primary"
             style="width:100%;"
@@ -48,6 +49,7 @@ import LoginHeader from "./LoginHeader.vue";
   components: { LoginHeader }
 })
 export default class Password extends Vue {
+  @Provide() loading: boolean = false;
   @Provide() ruleForm: {
     username: String;
     email: String;
@@ -75,7 +77,17 @@ export default class Password extends Vue {
   handleSubmit(): void {
     (this.$refs["ruleForm"] as any).validate((valid: boolean) => {
       if (valid) {
-        console.log("校验通过");
+        this.loading = true;
+        (this as any).$axios.post('/api/users/findPwd', this.ruleForm).then((res: any) => {
+          this.loading = false;
+          this.$message({
+            message: res.data.msg,
+            type: "success"
+          });
+          this.$router.push('/login');
+        }).catch(() => {
+          this.loading = false;
+        })
       }
     });
   }
