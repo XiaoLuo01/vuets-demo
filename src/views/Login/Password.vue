@@ -1,7 +1,7 @@
 <template>
   <div class="password">
     <LoginHeader>
-      <el-from
+      <el-form
         slot="container"
         :model="ruleForm"
         :rules="rules"
@@ -31,12 +31,11 @@
         <el-form-item>
           <el-button
             @click.native.prevent="handleSubmit"
-            :loading="loading"
             type="primary"
             style="width:100%;"
           >确定</el-button>
         </el-form-item>
-      </el-from>
+      </el-form>
     </LoginHeader>
   </div>
 </template>
