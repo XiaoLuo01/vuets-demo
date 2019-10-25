@@ -48,12 +48,16 @@
 
 <script lang="ts">
 import { Component, Vue, Provide } from "vue-property-decorator";
+import { State, Getter, Mutation, Action } from "vuex-class";
 import LoginHeader from "./LoginHeader.vue";
 
 @Component({
   components: { LoginHeader }
 })
 export default class Login extends Vue {
+  // 存储用户信息
+  @Action("setUser") setUser: any;
+
   // 装饰器, 相当于 data return 里面绑定的数据
   @Provide() isLogin: boolean = false;
   @Provide() ruleForm: {
@@ -79,6 +83,11 @@ export default class Login extends Vue {
           this.isLogin = false;
           // 存储 token
           localStorage.setItem("tsToken", res.data.token);
+          // 存储到 vuex 中
+          this.setUser(res.data.token);
+
+          // 登录成功跳转到首页
+          this.$router.push("/");
         }).catch(() => {
           this.isLogin = false;
         })
