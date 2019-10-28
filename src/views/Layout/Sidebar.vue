@@ -11,12 +11,19 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { Getter } from 'vuex-class';
 
 @Component({
     components: {}
 })
 
-export default class Sidebar extends Vue {}
+export default class Sidebar extends Vue {
+  @Getter("routers") getRouters: any;
+
+  created() {
+    console.log(this.getRouters);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
