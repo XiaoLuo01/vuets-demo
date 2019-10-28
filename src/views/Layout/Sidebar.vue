@@ -1,7 +1,12 @@
 <template>
- <div class="sidebar">
-    sidebar
- </div>
+  <el-scrollbar class="el-scrollbar">
+    <el-menu class="el-menu-slide">
+      <el-menu-item index="1">
+        <i class="el-icon-menu"></i>
+        <span slot="title">首页</span>
+      </el-menu-item>
+    </el-menu>
+  </el-scrollbar>
 </template>
 
 <script lang="ts">
