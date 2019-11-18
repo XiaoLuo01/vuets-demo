@@ -12,9 +12,9 @@
       <el-table-column width="120" label="报名人数" prop="count"></el-table-column>
       <el-table-column width="160" label="上线日期" prop="date"></el-table-column>
       <el-table-column label="操作" width="160">
-        <template>
-          <el-button size="mini">编辑</el-button>
-          <el-button size="mini" type="danger">删除</el-button>
+        <template slot-scope="scope">
+          <el-button @click="hanldeEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
+          <el-button @click="handleDelete(scope.$index, scope.row)" size="mini" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -22,14 +22,18 @@
     <div class="pages" ref="page-box">
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper" :total="total"></el-pagination>
     </div>
+
+    <!-- 编辑页面 -->
+    <EditDialog :dialogVisible="dialogVisible" :form="formData" @closeDialog="closeDialog"></EditDialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Provide } from "vue-property-decorator";
+import EditDialog from "./EditDialog.vue";
 
 @Component({
-  components: {}
+  components: { EditDialog }
 })
 export default class TableData extends Vue {
   @Provide() searchVal: string = ""; // 搜索框
@@ -38,6 +42,15 @@ export default class TableData extends Vue {
   @Provide() page: number = 1; // 当前 page
   @Provide() size: number = 5; // 请求数据的个数: 默认 5
   @Provide() total: number = 0; // 总数据条数
+
+  @Provide() dialogVisible: boolean = false; // 是否展示编辑页面
+  @Provide() formData: object = {
+    title: "",
+    type: "",
+    level: "",
+    count: "",
+    date: ""
+  }
 
   created() {
     this.loadData();
@@ -76,6 +89,27 @@ export default class TableData extends Vue {
   handleCurrentChange(val: number):void {
     this.page = val;
     this.searchVal ? this.loadSearchData() : this.loadData();
+  }
+
+  // 打开编辑页面弹窗
+  hanldeEdit(index: number, row: any) {
+    this.formData = row;
+    this.dialogVisible = true;
+  }
+
+  handleDelete(index: number, row: any) {
+    (this as any).$axios.delete(`/api/profiles/delete/${row._id}`).then((res: any) => {
+      this.$message({
+        message: res.data.msg,
+        type: "success"
+      })
+
+      this.tableData.splice(index, 1);
+    })
+  }
+
+  closeDialog() {
+    this.dialogVisible = false;
   }
 }
 </script>
