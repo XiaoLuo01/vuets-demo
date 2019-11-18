@@ -2,7 +2,7 @@
   <div class="table-data">
     <div class="search-box">
       <el-input size="small" v-model="searchVal" placeholder="请输入课程名称检索"></el-input>
-      <el-button size="small" type="primary" icon="el-icon-search">搜索</el-button>
+      <el-button size="small" type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
     </div>
     <el-table :data="tableData" border style="width:100%" :height="tHeight" class="table-box">
       <el-table-column type="index" label="序号" width="60"></el-table-column>
@@ -20,7 +20,7 @@
     </el-table>
     <!-- 分页 -->
     <div class="pages" ref="page-box">
-      <el-pagination :page-sizes="[5, 10, 20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper" :total="total"></el-pagination>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20]" :page-size="size" layout="total,sizes,prev,pager,next,jumper" :total="total"></el-pagination>
     </div>
   </div>
 </template>
@@ -51,6 +51,31 @@ export default class TableData extends Vue {
         this.total = res.data.data.total;
       })
       .catch(() => {});
+  }
+
+  handleSearch():void  {
+    // 点击搜索
+    this.page = 1;
+    this.searchVal ? this.loadSearchData() : this.loadData();
+  }
+
+  loadSearchData() {
+    // 加载搜索数据
+    (this as any) .$axios(`/api/profiles/search/${this.searchVal}/${this.page}/${this.size}`).then((res: any) => {
+      this.tableData = res.data.datas.list;
+      this.total = res.data.datas.total;
+    }).catch(() =>{})
+  }
+
+  handleSizeChange(val: number):void {
+    this.size = val;
+    this.page = 1;
+    this.searchVal ? this.loadSearchData() : this.loadData();
+  }
+
+  handleCurrentChange(val: number):void {
+    this.page = val;
+    this.searchVal ? this.loadSearchData() : this.loadData();
   }
 }
 </script>
